@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <h2><%= todo.title %></h2>
+    <p>Status: <%= todo.done ? 'Hotový' : 'Nehotový' %></p>
+
+    <form action="/todo/<%= todo.id %>/update-title" method="post">
+        <label for="title">Nový titulek:</label>
+        <input type="text" id="title" name="title">
+        <button type="submit">Upravit titulek</button>
+    </form>
+
+    <p><a href="/toggle-todo/<%= todo.id %>"><%= todo.done ? 'Hotovo' : 'Nehotovo' %></a></p>
+    <p><a href="/remove-todo/<%= todo.id %>">Odebrat</a></p>
+</body>
+</html>

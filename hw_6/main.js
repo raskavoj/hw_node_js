@@ -1,6 +1,7 @@
 import express from 'express'
 import knex from 'knex'
 import knexfile from './knexfile.js'
+import { getCzechPriorityName } from './externalFunc.js'
 
 const app = express()
 const db = knex(knexfile)
@@ -21,6 +22,7 @@ app.get('/', async (req, res) => {
   res.render('index', {
     title: 'Todos',
     todos,
+    getCzechPriorityNameEjs: getCzechPriorityName,
   })
 })
 
@@ -31,6 +33,7 @@ app.get('/todo/:id', async (req, res, next) => {
 
   res.render('todo', {
     todo,
+    getCzechPriorityNameEjs: getCzechPriorityName,
   })
 })
 
@@ -50,7 +53,14 @@ app.post('/update-todo/:id', async (req, res, next) => {
 
   if (!todo) return next()
 
-  await db('todos').update({ title: req.body.title }).where('id', todo.id)
+  const updateData = {};
+  updateData.priority = req.body.priority;
+
+  if (req.body.title) {
+    updateData.title = req.body.title;
+  }
+
+  await db('todos').update(updateData).where('id', todo.id)
 
   res.redirect('back')
 })

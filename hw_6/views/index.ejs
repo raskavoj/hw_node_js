@@ -9,29 +9,46 @@
 
   <h1><%= title %></h1>
 
-  <ul>
-  <% for (const todo of todos) { %>
-    <li>
-      <a href="/todo/<%= todo.id %>">
-        <%= todo.title %>
-      </a>
-      &nbsp;
-      <a href="/remove-todo/<%= todo.id %>">
-        odebrat
-      </a>
-      &nbsp;
-      <a href="/toggle-todo/<%= todo.id %>">
-        <%= todo.done ? 'hotovo' : 'nehotvo' %>
-      </a>
-    </li>
-  <% } %>
-  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Název</th>
+        <th>Priorita</th>
+        <th>Akce</th>
+        <th>Stav</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const todo of todos) { %>
+        <tr>
+          <td>
+            <a href="/todo/<%= todo.id %>">
+              <%= todo.title %>
+            </a>
+          </td>
+          <td>
+            <%= getCzechPriorityNameEjs(todo.priority) %>
+          </td>
+          <td>
+            <a href="/remove-todo/<%= todo.id %>">
+              Odstranit
+            </a>
+          </td>
+          <td>
+            <a href="/toggle-todo/<%= todo.id %>">
+              <%= todo.done ? 'Dokončeno' : 'Nedokončeno' %>
+            </a>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+  &nbsp;  
 
   <form method="post" action="/add-todo">
     <input placeholder="Název todočka" name="title">
     <button type="submit">Přidat</button>
   </form>
-
 
 </body>
 </html>

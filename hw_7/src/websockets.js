@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws'
 import ejs from 'ejs'
-import { db, getAllTodos } from './db.js'
+import { getAllTodos, getTodoById } from './db.js'
 
 const connections = new Set()
 
@@ -33,4 +33,30 @@ export const sendTodoListToAllConnections = async () => {
       })
     )
   }
+}
+
+export const sendTodoUpdateToAllConnections = async (todoId = null) => {
+  const todo = await getTodoById(todoId);
+  let todoDetail = "Dané Todo již neexistuje, bylo smazáno! <br> <a href='/'>Zpět na seznam</a>";
+  
+  if (todo) {
+    todoDetail = await ejs.renderFile('views/todo.ejs', {
+      todo: todo,
+    })
+  }
+
+  for (const connection of connections) {
+    connection.send(
+      JSON.stringify({
+        type: 'todoUpdate',
+        todoId: todoId,
+        html: todoDetail,
+      })
+    )
+  }
+}
+
+export const sendTodoUpdates = async (todoId = null) => {
+  await sendTodoListToAllConnections()
+  await sendTodoUpdateToAllConnections(todoId)
 }

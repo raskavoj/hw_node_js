@@ -6,8 +6,8 @@
   <title><%= todo.title %></title>
 </head>
 <body>
-
   <h1><%= todo.title %></h1>
+  <input type="hidden" id="todoId" value="<%= todo.id %>">
 
   <hr>
 
@@ -27,9 +27,9 @@
     <input placeholder="Název todočka" name="title" value="<%= todo.title %>">
     <label>Priorita</label>
     <select name="priority">
-      <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>><%= translatePriority('low') %></option>
-      <option value="normal" <%= todo.priority === 'normal' ? 'selected' : '' %>><%= translatePriority('normal') %></option>
-      <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>><%= translatePriority('high') %></option>
+      <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>Low</option>
+      <option value="normal" <%= todo.priority === 'normal' ? 'selected' : '' %>>Normal</option>
+      <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>High</option>
     </select>
     <button type="submit">Upravit</button>
   </form>
@@ -37,6 +37,19 @@
   <hr>
 
   <a href="/">Zpět na seznam</a>
+
+  <script>
+    const ws = new WebSocket('ws://localhost:3000')
+
+    ws.addEventListener('message', (ev) => {
+      const data = JSON.parse(ev.data)
+      const todoId = Number(document.getElementById('todoId').value)
+
+      if (data.type === 'todoUpdate' && data.todoId === todoId) {
+        document.body.innerHTML = data.html;
+      }
+    })
+  </script>
 
 </body>
 </html>

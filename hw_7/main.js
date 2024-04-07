@@ -1,6 +1,6 @@
 import express from 'express'
 import { db, getAllTodos, getTodoById } from './src/db.js'
-import { createWebSocketServer, sendTodoListToAllConnections } from './src/websockets.js'
+import { createWebSocketServer, sendTodoListToAllConnections, sendTodoUpdates } from './src/websockets.js'
 
 const app = express()
 
@@ -41,6 +41,8 @@ app.post('/add-todo', async (req, res) => {
 
   await db('todos').insert(todo)
 
+  sendTodoListToAllConnections()
+
   res.redirect('/')
 })
 
@@ -56,6 +58,8 @@ app.post('/update-todo/:id', async (req, res, next) => {
 
   await query
 
+  sendTodoUpdates(todo.id)
+
   res.redirect('back')
 })
 
@@ -66,7 +70,7 @@ app.get('/remove-todo/:id', async (req, res) => {
 
   await db('todos').delete().where('id', todo.id)
 
-  sendTodoListToAllConnections()
+  sendTodoUpdates(todo.id)
 
   res.redirect('/')
 })
@@ -78,7 +82,7 @@ app.get('/toggle-todo/:id', async (req, res, next) => {
 
   await db('todos').update({ done: !todo.done }).where('id', todo.id)
 
-  sendTodoListToAllConnections()
+  sendTodoUpdates(todo.id)
 
   res.redirect('back')
 })

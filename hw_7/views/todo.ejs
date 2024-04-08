@@ -46,7 +46,7 @@
       const todoId = Number(document.getElementById('todoId').value)
 
       if (data.type === 'todoUpdate' && data.todoId === todoId) {
-        document.body.innerHTML = data.html;
+        document.documentElement.innerHTML = data.html;
       }
     })
   </script>

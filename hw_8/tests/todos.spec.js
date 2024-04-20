@@ -18,7 +18,7 @@ test.serial("it renders a list of todos", async (t) => {
   t.assert(response.text.includes("<h1>Todos</h1>"))
 });
 
-// Test - insert new todo to DB
+// Test - add new todo to DB
 test.serial("create new todo", async (t) => {
   await db("todos").insert({
     title: "Moje todo",
@@ -29,7 +29,7 @@ test.serial("create new todo", async (t) => {
   t.assert(response.text.includes("Moje todo"))
 });
 
-// Test - insert new todo via form
+// Test - add new todo via form
 test.serial("create new todo via form", async (t) => {
   const response = await supertest
     .agent(app)
@@ -50,7 +50,7 @@ test.serial("remove todo", async (t) => {
   const response = await supertest
     .agent(app)
     .get(`/remove-todo/${insertedTodo[0]}`)
-    .redirects(1);
+    .redirects(1)
 
   t.assert(!response.text.includes("Moje todo ke smazání"))
 });
@@ -71,7 +71,7 @@ test.serial("toggle todo status", async (t) => {
   t.assert(response.text.includes("hotovo"))
 });
 
-// Test - detail of todo
+// Test - render detail of todo
 test.serial("render todo detail page for existing todo", async (t) => {
   const insertedTodo = await db("todos").insert({
     title: "Todo test",
@@ -82,11 +82,11 @@ test.serial("render todo detail page for existing todo", async (t) => {
     .get(`/todo/${insertedTodo[0]}`)
 
   t.is(response.status, 200)
-  t.assert(response.text.includes("Todo test"))
+  t.assert(response.text.includes("<h1>Todo test</h1>"))
 });
 
-// Test - update todo
-test.serial("update existing todo", async (t) => {
+// Test - update existing todo via form
+test.serial("update existing todo via form", async (t) => {
   const insertedTodo = await db("todos").insert({
     title: "Old Todo Title",
     priority: "low",
@@ -102,6 +102,38 @@ test.serial("update existing todo", async (t) => {
 
   const updatedTodo = await db("todos").select("*").where("id", insertedTodo[0]).first()
 
-  t.is(updatedTodo.title, "New Todo Title");
-  t.is(updatedTodo.priority, "high");
+  t.is(updatedTodo.title, "New Todo Title")
+  t.is(updatedTodo.priority, "high")
+});
+
+// Test - remove non-existent todo
+test.serial("remove non-existent todo", async (t) => {
+  const response = await supertest
+    .agent(app)
+    .get("/remove-todo/120")
+
+    t.is(response.status, 404)
+});
+
+// Test - render detail of non-existent todo 
+test.serial("render todo detail page for non-existent todo", async (t) => {
+  const response = await supertest
+    .agent(app)
+    .get("/todo/120")
+
+  t.is(response.status, 404)
+  t.assert(response.text.includes("404 - Stránka nenalezena"))
+});
+
+// Test - add new todo without title via form
+test.serial("create new todo without title via form", async (t) => {
+  const response = await supertest
+    .agent(app)
+    .post("/add-todo")
+    .type("form")
+    .send({ title: "" })
+    .redirects(1)
+
+  t.is(response.status, 400)
+  t.assert(response.text.includes("<h3>Název todočka nesmí být prázdný!</h3>"))
 });

@@ -37,15 +37,21 @@ app.get("/todo/:id", async (req, res, next) => {
   })
 })
 
-app.post("/add-todo", async (req, res) => {
+app.post("/add-todo", async (req, res) => {  
+  if (!req.body.title || req.body.title.trim() === "") {
+    return res.status(400).send("<h3>Název todočka nesmí být prázdný!</h3> <br> <a href='/'>Zpět na seznam</a>");
+  }
+
   const todo = {
     title: req.body.title,
     done: false,
-  }
+  };
 
-  await db("todos").insert(todo)
+  await db("todos").insert(todo);
 
-  res.redirect("/")
+  sendTodoListToAllConnections();
+
+  res.redirect("/");
 })
 
 app.post("/update-todo/:id", async (req, res, next) => {

@@ -19,9 +19,9 @@
     <input placeholder="Název todočka" name="title" value="<%= todo.title %>">
     <label>Priorita</label>
     <select name="priority">
-      <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>><%= translatePriority('low') %></option>
-      <option value="normal" <%= todo.priority === 'normal' ? 'selected' : '' %>><%= translatePriority('normal') %></option>
-      <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>><%= translatePriority('high') %></option>
+      <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>Low</option>
+      <option value="normal" <%= todo.priority === 'normal' ? 'selected' : '' %>>Normal</option>
+      <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>High</option>
     </select>
     <button type="submit">Upravit</button>
   </form>

@@ -71,7 +71,7 @@ app.post("/update-todo/:id", async (req, res, next) => {
   res.redirect("back")
 })
 
-app.get("/remove-todo/:id", async (req, res) => {
+app.get("/remove-todo/:id", async (req, res, next) => {
   const todo = await getTodoById(req.params.id)
 
   if (!todo) return next()
